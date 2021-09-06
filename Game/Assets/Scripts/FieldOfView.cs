@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class FieldOfView : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class FieldOfView : MonoBehaviour
     public LayerMask targetMask;
     public LayerMask obstacleMask;
 
-    [HideInInspector]
+    //[HideInInspector]
     public List<Transform> visibleTargets = new List<Transform>();
 
     public float meshResolution;
@@ -24,12 +25,18 @@ public class FieldOfView : MonoBehaviour
     public MeshFilter viewMeshFilter;
     Mesh viewMesh;
 
+    //variable for GameObjects that are hit by raycast 
+    public string GameObjectType = "Player";
+    bool moving = false;
+    public List<Transform> hitObjects = new List<Transform>();
+
     void Start()
     {
         viewMesh = new Mesh();
         viewMesh.name = "View Mesh";
         viewMeshFilter.mesh = viewMesh;
 
+        //couroutine loops indefinitely to find target
         StartCoroutine("FindTargetsWithDelay", .2f);
     }
 
@@ -41,6 +48,7 @@ public class FieldOfView : MonoBehaviour
             yield return new WaitForSeconds(delay);
             FindVisibleTargets();
         }
+
     }
 
     void LateUpdate()
@@ -67,6 +75,84 @@ public class FieldOfView : MonoBehaviour
             }
         }
     }
+
+    private void Update()
+    {
+        if (visibleTargets.Count != 0)
+        {
+            if (GameObjectType == "Player")
+            {
+                if (hitObjects.Count == 0)
+                {
+                    foreach (Transform target in visibleTargets)
+                    {
+                        target.SendMessage("OnHitEnter");
+                        hitObjects.Add(target);
+                    }
+                }
+                else if (hitObjects.Count != 0)
+                {
+                    foreach (Transform target in visibleTargets)
+                    {
+
+                            if (hitObjects.Contains(target))
+                            {
+                                target.SendMessage("OnHitStay");
+                            }
+                            else
+                            {
+                                target.SendMessage("OnHitEnter");
+                                hitObjects.Add(target);
+                            }
+                    }
+                }
+                if (hitObjects.Count > visibleTargets.Count)
+                {
+                    foreach (Transform current in hitObjects.ToList())
+                    {
+
+                        if (!visibleTargets.Contains(current))
+                        {
+                            current.SendMessage("OnHitExit");
+                            hitObjects.Remove(current);
+                        }
+
+                    }
+                }
+            }
+            if (GameObjectType == "Enemy")
+            {
+                if (moving == false)
+                {
+                    EnemyMove enemy = gameObject.GetComponent<EnemyMove>();
+                    enemy.OnHitEnter();
+                    moving = true;
+                }
+            }
+        }
+        else
+        {
+            if (GameObjectType == "Player")
+            {
+              foreach (Transform current in hitObjects.ToList())
+               {
+                    current.SendMessage("OnHitExit");
+                    hitObjects.Remove(current);
+               }
+  
+            }
+            if (GameObjectType == "Enemy")
+            {
+                if (moving == true)
+                {
+                    EnemyMove enemy = gameObject.GetComponent<EnemyMove>();
+                    enemy.OnHitExit();
+                    moving = false;
+                }
+            }
+        }
+    }
+  
 
     void DrawFieldOfView()
     {

@@ -6,17 +6,42 @@ using UnityEngine.AI;
 
 public class EnemyMove : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Transform target=null;
+    public Transform homePos=null;
+    public float speed = 10f;
+    bool moving = false;
+
+    public string text;
+    public void OnHitEnter()
     {
-        
+        moving = true;
+        Debug.Log("On hit Enter " + text);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnHitStay()
     {
-        
+        //Debug.Log("On hit Stay " + text);
     }
+
+    public void OnHitExit()
+    {
+        Debug.Log("On hit Exit " + text);
+        moving = false;
+    }
+
+    private void Update()
+    {
+        if (moving == true)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+        }
+        if (moving == false)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, homePos.position, speed * Time.deltaTime);
+        }
+    }
+
+
 
 
 }
