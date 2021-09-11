@@ -122,11 +122,12 @@ public class FieldOfView : MonoBehaviour
             }
             if (GameObjectType == "Enemy")
             {
-                if (moving == false)
+                if (visibleTargets.Count != 0)
                 {
-                    EnemyMove enemy = gameObject.GetComponent<EnemyMove>();
-                    enemy.OnHitEnter();
-                    moving = true;
+                        EnemyMove enemy = gameObject.GetComponent<EnemyMove>();
+                        enemy.OnHitEnter();
+                        moving = true;
+
                 }
             }
         }
@@ -145,9 +146,9 @@ public class FieldOfView : MonoBehaviour
             {
                 if (moving == true)
                 {
-                    EnemyMove enemy = gameObject.GetComponent<EnemyMove>();
-                    enemy.OnHitExit();
-                    moving = false;
+                        EnemyMove enemy = gameObject.GetComponent<EnemyMove>();
+                        enemy.OnHitExit();
+                        moving = false; 
                 }
             }
         }
