@@ -12,9 +12,16 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
     public GameObject GameOverPanel;
     public GameObject KeyNumberPanel;
+
     public bool mousemovement = true;
     public int keygoal;
     public int key;
+
+    public GameObject Player;
+    public float Percentage = 100;
+    public float timeRemaining;
+
+
     [HideInInspector]
     public bool keynumchange = false;
     // Start is called before the first frame update
