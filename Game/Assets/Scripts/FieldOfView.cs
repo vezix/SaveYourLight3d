@@ -22,6 +22,8 @@ public class FieldOfView : MonoBehaviour
 
     public float maskCutawayDst = 0.0f;
 
+    public Light spotlight;
+
     public MeshFilter viewMeshFilter;
     Mesh viewMesh;
 
@@ -33,12 +35,19 @@ public class FieldOfView : MonoBehaviour
 
     void Start()
     {
+       
         viewMesh = new Mesh();
         viewMesh.name = "View Mesh";
         viewMeshFilter.mesh = viewMesh;
 
         //couroutine loops indefinitely to find target
         StartCoroutine("FindTargetsWithDelay", .2f);
+
+        if (spotlight != null)
+        {
+            spotlight.range = viewRadius;
+            spotlight.spotAngle = viewAngle;
+        }
     }
 
 
