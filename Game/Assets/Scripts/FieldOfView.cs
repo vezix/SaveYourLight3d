@@ -63,6 +63,10 @@ public class FieldOfView : MonoBehaviour
                 if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
                 {
                     visibleTargets.Add(target);
+                    if (target.tag == "Enemy")
+                    {
+                        target.SendMessage("HitByRay");
+                    }
                 }
             }
         }
@@ -207,5 +211,4 @@ public class FieldOfView : MonoBehaviour
             pointB = _pointB;
         }
     }
-
 }
